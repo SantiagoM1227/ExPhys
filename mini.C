@@ -3,10 +3,15 @@
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
+#include <fstream>
+
 
 void mini::Loop()
 {
-
+   ofstream Cutflow("Cutflow.txt");
+   ofstream absolute_efficiency("absolute_efficiency.txt");
+   ofstream relative_efficiency("relative_efficiency.txt");
+	
    if (fChain == 0) return;
    
    //# of entries and bytes
@@ -119,8 +124,15 @@ void mini::Loop()
    std::cout << "Done!" << std::endl;
    std::cout << "All events:" << nentries << std::endl;
    for (int k=0; k<8; k++){
-     std::cout << "Cut"<<k+1<<":"<< cut[k] << std::endl;
+     Cutflow<< "Cut"<<k+1<<": "<< cut[k] << std::endl;
    }
+   for (int k=0; k<8; k++){
+     absolute_efficiency<< "efficiency "<<k+1<<": "<< float(cut[k])/float(cut[0]) << std::endl;
+   }
+   for (int k=1; k<8; k++){
+     relative_efficiency<< "relative efficiency "<<k<<": "<< float(cut[k])/float(cut[k-1]) << std::endl;
+   }
+   
    
    
    TCanvas *canvas_cutflow = new TCanvas("Cutflow","",800,600);
