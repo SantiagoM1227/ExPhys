@@ -81,8 +81,8 @@ void mini::Loop()
 	
       for (unsigned int j=0; j<jet_n; j++){
         if (jet_pt[j]<2500.) continue;
-        if (TMath::Abs(jet_eta[j])>2.4&& jet_pt[j]>50000) continue;
-        if (jet_jvf[j] < 0.5) continue;
+        if (TMath::Abs(jet_eta[j])>=2.5) continue;
+        if (jet_jvf[j] <= 0.5&&jet_pt[j]<50000.&& TMath::Abs(jet_eta[j])<2.4) continue;
         n_jets++;
         if (jet_MV1[j] > 0.7892){n_bjets++;}
       }
