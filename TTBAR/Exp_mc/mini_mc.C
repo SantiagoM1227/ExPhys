@@ -14,8 +14,7 @@ void mini_mc::Loop()
    ofstream absolute_efficiency("absolute_efficiency_mc.txt");
    ofstream relative_efficiency("relative_efficiency_mc.txt");
    
-   Long64_t L_Data = 1000.
-   Long64_t L_MC = 
+   
    
    if (fChain == 0) return;
 
@@ -23,7 +22,10 @@ void mini_mc::Loop()
 
    Long64_t nbytes = 0, nb = 0;
    
+   Long64_t L_Data = 1000.
+   Long64_t L_MC = (49761200.21*0.072212854)/137.29749;
    
+   long64_t weight = L_Data/L_MC;
    
    //declare auxiliary variables
    
@@ -36,43 +38,43 @@ void mini_mc::Loop()
    
    for (Int_t jentry=0; jentry<nentries;jentry++) {
       GetEntry(jentry);
+      
+      //event weights
+      Float_t SF = scaleFactor_PILEUP*scaleFactor_ELE*scaleFactor_MUON*scaleFactor_BTAG *scaleFactor_TRIGGER*scaleFactor_JVFSF*scaleFactor_ZVERTEX;
+      
+      Float_t evtw= SF*weight;
+      
+      
       //Fill Histograms
       
+      
+      
+      
       for (int n_aux_lep = 0; n_aux_lep < lep_n;n_aux_lep ++){
-      	hist_lep_pt  -> Fill(lep_pt[n_aux_lep]/1000.);
-      	hist_lep_eta -> Fill(lep_eta[n_aux_lep]);      	Lepton_before.SetPtEtaPhiM(lep_pt[n_aux_lep],lep_eta[n_aux_lep],lep_phi[n_aux_lep],lep_E[n_aux_lep]);
+      	hist_lep_pt  -> Fill(lep_pt[n_aux_lep]/1000.,evtw);
+      	hist_lep_eta -> Fill(lep_eta[n_aux_lep],evtw);      	Lepton_before.SetPtEtaPhiM(lep_pt[n_aux_lep],lep_eta[n_aux_lep],lep_phi[n_aux_lep],lep_E[n_aux_lep]);
       	Float_t mTW = sqrt(2*Lepton_before.Pt()*MeT_before.Et()*(1-cos(Lepton_before.DeltaPhi(MeT_before))));
-      	hist_mtW     -> Fill(mTW);
+      	hist_mtW     -> Fill(mTW,evtw);
       }
    
       hist_njets_before   -> Fill(jet_n);
       
       for (int n_aux_jet = 0; n_aux_jet < jet_n;n_aux_jet ++){
-      	hist_jet_pt  -> Fill(jet_pt[n_aux_jet]/1000.);
-      	hist_jet_eta -> Fill(lep_eta[n_aux_jet]);
-      	hist_jet_jvf  -> Fill(jet_jvf[n_aux_jet]);
-      	hist_jet_mv1 -> Fill(jet_MV1[n_aux_jet]);
+      	hist_jet_pt  -> Fill(jet_pt[n_aux_jet]/1000.,evtw);
+      	hist_jet_eta -> Fill(lep_eta[n_aux_jet],evtw);
+      	hist_jet_jvf  -> Fill(jet_jvf[n_aux_jet],evtw);
+      	hist_jet_mv1 -> Fill(jet_MV1[n_aux_jet],evtw);
       	if (jet_MV1[n_aux_jet] >= 0.7892){n_bjet_before++;}
       	
       }
 
       
-      hist_nbjet -> Fill(n_bjet_before);
-      hist_met -> Fill(met_et);
+      hist_nbjet -> Fill(n_bjet_before,evtw);
+      hist_met -> Fill(met_et,evtw);
       
       
-      //define evtw
-      /*
-      Float_t evtw_PILEUP = mcWeight*scaleFactor_PILEUP;
-      Float_t evtw_ELE = mcWeight*scaleFactor_ELE;
-      Float_t evtw_MUON = mcWeight*scaleFactor_MUON;
-      Float_t evtw_BTAG = mcWeight*scaleFactor_BTAG;
-      Float_t evtw_TRIGGER = mcWeight*scaleFactor_TRIGGER;
-      Float_t evtw_JVFSF = mcWeight*scaleFactor_JVFSF;
-      Float_t evtw_ZVERTEX = mcWeight*scaleFactor_ZVERTEX;
-      */
       
-      Float_t SF = scaleFactor_PILEUP*scaleFactor_ELE*scaleFactor_MUON*scaleFactor_BTAG *scaleFactor_TRIGGER*scaleFactor_JVFSF*scaleFactor_ZVERTEX;
+      
       
       
       //1st cut: good vertex
@@ -106,19 +108,19 @@ void mini_mc::Loop()
           
       //3rd cut: processes with ONLY ONE good LEPTON
       if (n_lep!=1)continue;
-      cutflow-> Fill(3);
+      cutflow-> Fill(3,1.0);
       cut[2]++;
 	  
       int n_jets = 0;
       int n_bjets = 0;
 	  
       //# of jets distribution
-      hist_njets -> Fill(jet_n);
+      hist_njets -> Fill(jet_n,1.0);
 	  
       //4th cut: At least 4 jets
 	 
       if (jet_n<4) continue;
-      cutflow -> Fill(4);
+      cutflow -> Fill(4,1.0);
       cut[3]++;
 	
       for (unsigned int j=0; j<jet_n; j++){
@@ -131,19 +133,19 @@ void mini_mc::Loop()
       
       //5th cut: At least 4 good jets
       if (n_jets<4) continue;
-      cutflow -> Fill(5);
+      cutflow -> Fill(5,1.0);
       cut[4]++;
       
 	 
       //6th cut: at least one b-jet
       if (n_bjets<2) continue;
-      cutflow -> Fill(6);
+      cutflow -> Fill(6,1.0);
       cut[5]++;
 	 
       //7th cut: MET > 30 GeV
 	 
       if(met_et<30000.) continue;
-      cutflow -> Fill(7);
+      cutflow -> Fill(7,1.0);
       cut[6]++;
 	 
       //TLorentzVector definition
@@ -156,7 +158,7 @@ void mini_mc::Loop()
       //8th cut mTW > 30GeV
         
       if (mTW<30000.) continue;
-      cutflow -> Fill(8);
+      cutflow -> Fill(8,1.0);
       cut[7]++; 
         
       

@@ -25,7 +25,7 @@ void TTbar_comp{
    hist_lep_pt-> SetTitle("pT for Leptons");
    hist_lep_pt->Draw("");
    canvas_hist_lep_pt->SetLogy();
-   canvas_hist_lep_pt->Print("./Tarea2_output/hist_lep_pt.pdf");
+   canvas_hist_lep_pt->Print("./Tarea3_output/hist_lep_pt_comp.pdf");
    
    
    TCanvas *canvas_hist_lep_eta = new TCanvas("lep_eta","",800,600);
