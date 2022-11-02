@@ -151,11 +151,14 @@ public :
    virtual void     Loop();
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
+   
 };
 
 #endif
 
 #ifdef mini_mc_cxx
+
+
 mini_mc::mini_mc(TTree *tree) : fChain(0) 
 {
 // if parameter tree is not specified (or zero), connect the file

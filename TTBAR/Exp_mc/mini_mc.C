@@ -4,6 +4,62 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 
+void Graph_Histogram(TH1F *histogram1, TH1F *histogram2, const char* title, const char* Label1, const char* Label2, bool log){
+   
+   
+   std::string Folder = "./Tarea3_output/";
+   std::string Title  = title;
+   std::string Format = ".pdf";
+   std::string Path = Folder+title+Format;
+   
+   const char *path = Path.c_str();
+   
+   TCanvas *canvas = new TCanvas(title,"",800,600);
+   histogram1 -> SetTitle(title);
+   histogram1 -> SetMarkerColor(kRed);
+   histogram1 -> SetMarkerStyle(20);
+   histogram1 -> Draw("PL");
+   histogram2 -> SetMarkerStyle(21);
+   histogram2 -> Draw("same,PL");
+   auto legend = new TLegend(0.7, 0.8, 0.89, 0.6);
+   legend -> SetBorderSize(0);
+;
+   legend -> AddEntry(histogram1, Label1, "lep");  
+   legend -> AddEntry(histogram2, Label2, "lep");  
+   
+   legend -> Draw();
+   if (log){canvas ->SetLogy();}
+   
+   canvas->Print(path);
+}
+
+void Graph_Histogram_one(TH1F *histogram1, const char* title, const char* Label1, bool log){
+   
+   
+   std::string Folder = "./Tarea3_output/";
+   std::string Title  = title;
+   std::string Format = ".pdf";
+   std::string Path = Folder+title+Format;
+   
+   const char *path = Path.c_str();
+   
+   TCanvas *canvas = new TCanvas(title,"",800,600);
+   histogram1 -> SetTitle(title);
+   histogram1 -> SetMarkerColor(kRed);
+   histogram1 -> SetMarkerStyle(20);
+   histogram1 -> Draw("PL");
+   auto legend = new TLegend(0.7, 0.8, 0.89, 0.6);
+   legend -> SetBorderSize(0);
+;
+   legend -> AddEntry(histogram1, Label1, "lep");  
+   
+   legend -> Draw();
+   if (log){canvas ->SetLogy();}
+   
+   canvas->Print(path);
+}
+
+
 
 
 void mini_mc::Loop()
@@ -22,10 +78,9 @@ void mini_mc::Loop()
 
    Long64_t nbytes = 0, nb = 0;
    
-   Long64_t L_Data = 1000.
-   Long64_t L_MC = (49761200.21*0.072212854)/137.29749;
+   Float_t weight = (1000.*137.29749)/(1500000.*0.072212854);
    
-   long64_t weight = L_Data/L_MC;
+   cout<<weight<<endl;
    
    //declare auxiliary variables
    
@@ -40,15 +95,11 @@ void mini_mc::Loop()
       GetEntry(jentry);
       
       //event weights
-      Float_t SF = scaleFactor_PILEUP*scaleFactor_ELE*scaleFactor_MUON*scaleFactor_BTAG *scaleFactor_TRIGGER*scaleFactor_JVFSF*scaleFactor_ZVERTEX;
+      Float_t SF = scaleFactor_PILEUP * scaleFactor_ELE * scaleFactor_MUON * scaleFactor_BTAG * scaleFactor_TRIGGER * scaleFactor_JVFSF * scaleFactor_ZVERTEX;
       
       Float_t evtw= SF*weight;
-      
-      
-      //Fill Histograms
-      
-      
-      
+            
+      //Fill Histograms    
       
       for (int n_aux_lep = 0; n_aux_lep < lep_n;n_aux_lep ++){
       	hist_lep_pt  -> Fill(lep_pt[n_aux_lep]/1000.,evtw);
@@ -78,12 +129,12 @@ void mini_mc::Loop()
       
       
       //1st cut: good vertex
-      if (!good_vtx) continue;
+      if (!hasGoodVertex) continue;
       cut[0]++;
       cutflow -> Fill(1,1.0);
   
       //2nd cut: Trigger
-      if (!e_trig && !mu_trig) continue;
+      if (!trigE && !trigM) continue;
       cut[1]++;
       cutflow->Fill(2,1.0);	
 	  
@@ -115,7 +166,7 @@ void mini_mc::Loop()
       int n_bjets = 0;
 	  
       //# of jets distribution
-      hist_njets -> Fill(jet_n,1.0);
+      hist_njets_after -> Fill(jet_n,1.0);
 	  
       //4th cut: At least 4 jets
 	 
