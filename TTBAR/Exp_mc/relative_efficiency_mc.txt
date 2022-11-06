@@ -1,7 +1,0 @@
-relative efficiency 1: 1
-relative efficiency 2: 0.891114
-relative efficiency 3: 0.466447
-relative efficiency 4: 0.998158
-relative efficiency 5: 0.417768
-relative efficiency 6: 0.825359
-relative efficiency 7: 0.843614
