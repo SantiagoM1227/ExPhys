@@ -1,8 +1,0 @@
-efficiency 1: 1
-efficiency 2: 1
-efficiency 3: 0.891114
-efficiency 4: 0.415657
-efficiency 5: 0.414892
-efficiency 6: 0.173329
-efficiency 7: 0.143058
-efficiency 8: 0.120686
