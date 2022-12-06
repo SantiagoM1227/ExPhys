@@ -1,6 +1,0 @@
-El valor de la señal es 887.611
-El valor del background es 27.7598
-La significancia para busquedas es 168.467
-La significancia para mediciones es 29.3376
-La pureza de la señal es 0.969674
-
